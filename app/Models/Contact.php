@@ -12,10 +12,17 @@ class Contact extends Model
     protected $table = 'contact';
 
     protected $fillable = [
+        'user_id',
         'nama',
         'alamat',
         'tanggal_lahir',
     ];
+
+    // Relasi Inverse One-to-Many ke User (belongsTo)
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     // Relasi One-to-Many ke ContactPhones (hasMany)
     public function phones()

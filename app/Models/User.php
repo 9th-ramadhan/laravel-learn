@@ -30,4 +30,10 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    // Relasi One-to-Many ke Contact (hasMany)
+    public function contacts()
+    {
+        return $this->hasMany(Contact::class, 'user_id');
+    }
 }

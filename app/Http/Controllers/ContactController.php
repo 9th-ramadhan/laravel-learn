@@ -7,11 +7,10 @@ use App\Models\Contact;
 
 class ContactController extends Controller
 {
-    // Menampilkan semua data kontak beserta relasi nomor teleponnya
-    public function index()
+    // Menampilkan semua data kontak milik user yang sedang login
+    public function index(Request $request)
     {
-        // Menggunakan 'phones' sesuai relasi hasMany pada model Contact
-        $contacts = Contact::with('phones')->get();
+        $contacts = $request->user()->contacts()->with('phones')->get();
 
         return response()->json([
             'status' => 'success',
@@ -19,7 +18,7 @@ class ContactController extends Controller
         ], 200);
     }
 
-    // Menyimpan kontak baru beserta nomor telepon (nested array phones)
+    // Menyimpan kontak baru untuk user yang sedang login
     public function store(Request $request)
     {
         $request->validate([
@@ -31,8 +30,8 @@ class ContactController extends Controller
             'phones.*.nomor_telepon' => 'required|string',
         ]);
 
-        // Simpan data utama kontak
-        $contact = Contact::create([
+        // Simpan data utama kontak terikat dengan user_id
+        $contact = $request->user()->contacts()->create([
             'nama' => $request->nama,
             'alamat' => $request->alamat,
             'tanggal_lahir' => $request->tanggal_lahir,
@@ -58,10 +57,10 @@ class ContactController extends Controller
         ], 201);
     }
 
-    // Menampilkan detail satu kontak spesifik
-    public function show($id)
+    // Menampilkan detail satu kontak spesifik milik user yang sedang login
+    public function show(Request $request, $id)
     {
-        $contact = Contact::with('phones')->find($id);
+        $contact = $request->user()->contacts()->with('phones')->find($id);
 
         if (! $contact) {
             return response()->json([
@@ -76,10 +75,10 @@ class ContactController extends Controller
         ], 200);
     }
 
-    // Mengupdate data kontak (dan mengganti/menambah phones jika diperlukan)
+    // Mengupdate data kontak milik user yang sedang login
     public function update(Request $request, $id)
     {
-        $contact = Contact::find($id);
+        $contact = $request->user()->contacts()->find($id);
 
         if (! $contact) {
             return response()->json([
@@ -109,10 +108,10 @@ class ContactController extends Controller
         ], 200);
     }
 
-    // Menghapus kontak (nomor telepon akan ikut terhapus otomatis jika menggunakan cascade onDelete di migration)
-    public function destroy($id)
+    // Menghapus kontak milik user yang sedang login
+    public function destroy(Request $request, $id)
     {
-        $contact = Contact::find($id);
+        $contact = $request->user()->contacts()->find($id);
 
         if (! $contact) {
             return response()->json([

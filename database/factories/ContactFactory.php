@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Contact;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,6 +21,7 @@ class ContactFactory extends Factory
     public function definition(): array
     {
         return [
+            'user_id' => User::factory(),
             'nama' => fake('id_ID')->name(),
             'alamat' => fake('id_ID')->address(),
             'tanggal_lahir' => fake()->date('Y-m-d', '2005-01-01'),
